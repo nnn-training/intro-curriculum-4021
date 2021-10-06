@@ -9,7 +9,6 @@ const Candidate = require('../models/candidate');
 const Availability = require('../models/availability');
 const Comment = require('../models/comment');
 const deleteScheduleAggregate = require('../routes/schedules').deleteScheduleAggregate;
-const { resolve } = require('path');
 
 describe('/login', () => {
   beforeAll(() => {
