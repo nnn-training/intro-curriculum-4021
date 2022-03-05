@@ -58,7 +58,7 @@ describe('/schedules', () => {
   });
 
   test('予定が作成でき、表示される', done => {
-    User.upsert({ userId: 0, username: 'testuser' }).then(() => {
+    User.upsert({ userId: 0, userName: 'testuser' }).then(() => {
       request(app)
         .post('/schedules')
         .send({
@@ -97,7 +97,7 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
   });
 
   test('出欠が更新できる', (done) => {
-    User.upsert({ userId: 0, username: 'testuser' }).then(() => {
+    User.upsert({ userId: 0, userName: 'testuser' }).then(() => {
       request(app)
         .post('/schedules')
         .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' })
@@ -140,7 +140,7 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
   });
 
   test('コメントが更新できる', done => {
-    User.upsert({ userId: 0, username: 'testuser' }).then(() => {
+    User.upsert({ userId: 0, userName: 'testuser' }).then(() => {
       request(app)
         .post('/schedules')
         .send({
@@ -183,7 +183,7 @@ describe('/schedules/:scheduleId?edit=1', () => {
   });
 
   test('予定が更新でき、候補が追加できる', (done) => {
-    User.upsert({ userId: 0, username: 'testuser' }).then(() => {
+    User.upsert({ userId: 0, userName: 'testuser' }).then(() => {
       request(app)
         .post('/schedules')
         .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
@@ -226,7 +226,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
   });
 
   test('予定に関連する全ての情報が削除できる', (done) => {
-    User.upsert({ userId: 0, username: 'testuser' }).then(() => {
+    User.upsert({ userId: 0, userName: 'testuser' }).then(() => {
       request(app)
         .post('/schedules')
         .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
@@ -279,19 +279,23 @@ describe('/schedules/:scheduleId?delete=1', () => {
               where: { scheduleId: scheduleId }
             }).then((comments) => {
               // TODO テストを実装
+              assert.strictEqual(comments.length, 0);
             });
             const p2 = Availability.findAll({
               where: { scheduleId: scheduleId }
             }).then((availabilities) => {
               // TODO テストを実装
+              assert.strictEqual(availabilities.length, 0);
             });
             const p3 = Candidate.findAll({
               where: { scheduleId: scheduleId }
             }).then((candidates) => {
               // TODO テストを実装
+              assert.strictEqual(candidates.length, 0);
             });
             const p4 = Schedule.findByPk(scheduleId).then((schedule) => {
               // TODO テストを実装
+              assert.strictEqual(!schedule, true);
             });
             Promise.all([p1, p2, p3, p4]).then(() => {
               if (err) return done(err);
