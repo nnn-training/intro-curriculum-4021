@@ -35,7 +35,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     include: [
       {
         model: User,
-        attributes: ['userId', 'username']
+        attributes: ['userId', 'userName']
       }],
     where: {
       scheduleId: req.params.scheduleId
@@ -60,11 +60,11 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ['userId', 'username']
+          attributes: ['userId', 'userName']
         }
       ],
       where: { scheduleId: storedSchedule.scheduleId },
-      order: [[User, 'username', 'ASC'], ['"candidateId"', 'ASC']]
+      order: [[User, 'userName', 'ASC'], ['"candidateId"', 'ASC']]
     });
   }).then((availabilities) => {
     // 出欠 MapMap(キー:ユーザー ID, 値:出欠Map(キー:候補 ID, 値:出欠)) を作成する
