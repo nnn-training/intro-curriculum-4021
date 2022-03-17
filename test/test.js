@@ -214,6 +214,8 @@ describe('/schedules/:scheduleId?edit=1', () => {
   });
 });
 
+//予定に関連する全ての情報が削除できるかどうかのテスト
+//クエリが delete=1 のパス
 describe('/schedules/:scheduleId?delete=1', () => {
   beforeAll(() => {
     passportStub.install(app);
@@ -224,17 +226,18 @@ describe('/schedules/:scheduleId?delete=1', () => {
     passportStub.logout();
     passportStub.uninstall(app);
   });
-
+  //テストにユーザーを設定し、POSTで予定、メモ、候補日を更新
   test('予定に関連する全ての情報が削除できる', (done) => {
     User.upsert({ userId: 0, username: 'testuser' }).then(() => {
       request(app)
         .post('/schedules')
         .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
         .end((err, res) => {
+          //レスポンスヘッダのlocationからscheduleIdを取得
           const createdSchedulePath = res.headers.location;
           const scheduleId = createdSchedulePath.split('/schedules/')[1];
 
-          // 出欠作成
+          // scheduleIdから候補日を取得し、それぞれの候補日で出欠を作成することを定義
           const promiseAvailability = Candidate.findOne({
             where: { scheduleId: scheduleId }
           }).then((candidate) => {
@@ -249,7 +252,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
             });
           });
 
-          // コメント作成
+          // 同様にコメント作成を定義
           const promiseComment = new Promise((resolve) => {
             request(app)
               .post(`/schedules/${scheduleId}/users/${0}/comments`)
@@ -261,7 +264,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
               });
           });
 
-          // 削除
+          // Promise.all関数で全ての関連する候補日とコメントを削除し、それが全て完了したら、新しくPromiseオブジェクトを作成し、POSTで以下のクエリのパスにアクセスすることを定義
           const promiseDeleted = Promise.all([promiseAvailability, promiseComment]).then(() => {
             return new Promise((resolve) => {
               request(app)
@@ -273,25 +276,30 @@ describe('/schedules/:scheduleId?delete=1', () => {
             });
           });
 
-          // テスト
+          // 練習問題のテストを実装
           promiseDeleted.then(() => {
+            //データモデルから関連するコメント配列を取得し、
             const p1 = Comment.findAll({
               where: { scheduleId: scheduleId }
             }).then((comments) => {
-              // TODO テストを実装
+              //コメントの長さが0であることをテスト
+              assert.strictEqual(comments.length, 0);
             });
             const p2 = Availability.findAll({
               where: { scheduleId: scheduleId }
             }).then((availabilities) => {
-              // TODO テストを実装
+              //データモデルから取得した出欠配列の長さが0であることをテスト
+              assert.strictEqual(availabilities.length, 0);
             });
             const p3 = Candidate.findAll({
               where: { scheduleId: scheduleId }
             }).then((candidates) => {
-              // TODO テストを実装
+              //データモデルから取得した候補日の配列の長さが0であることをテスト
+              assert.strictEqual(candidates.length, 0);
             });
             const p4 = Schedule.findByPk(scheduleId).then((schedule) => {
-              // TODO テストを実装
+              //データモデルから取得した予定オブジェクトがnullであることをテスト
+              assert.strictEqual(!schedule, true);
             });
             Promise.all([p1, p2, p3, p4]).then(() => {
               if (err) return done(err);
