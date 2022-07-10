@@ -237,16 +237,20 @@ describe('/schedules/:scheduleId?delete=1', () => {
     const comments = await Comment.findAll({
       where: { scheduleId: scheduleId }
     });
-    // TODO テストを実装
+    // コメントテスト
+    expect(comments.length).toBe(0);
     const availabilities = await Availability.findAll({
       where: { scheduleId: scheduleId }
     });
-    // TODO テストを実装
+    // 出欠テスト
+    expect(availabilities.length).toBe(0);
     const candidates = await Candidate.findAll({
       where: { scheduleId: scheduleId }
     });
-    // TODO テストを実装
+    // 候補テスト
+    expect(candidates.length).toBe(0);
     const schedule = await Schedule.findByPk(scheduleId);
-    // TODO テストを実装
+    // 予定テスト
+    expect(!schedule).toBe(true);
   });
 });
