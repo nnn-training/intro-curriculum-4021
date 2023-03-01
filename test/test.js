@@ -68,7 +68,7 @@ describe('/schedules', () => {
         candidates: 'テスト候補1\r\nテスト候補2\r\nテスト候補3'
       })
       .expect('Location', /schedules/)
-      .expect(302)
+      .expect(302);
 
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
@@ -80,7 +80,7 @@ describe('/schedules', () => {
       .expect(/テスト候補1/)
       .expect(/テスト候補2/)
       .expect(/テスト候補3/)
-      .expect(200)
+      .expect(200);
   });
 });
 
@@ -101,7 +101,7 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
     await User.upsert({ userId: 0, username: 'testuser' });
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' })
+      .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     const candidate = await Candidate.findOne({
@@ -112,7 +112,7 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
     await request(app)
       .post(`/schedules/${scheduleId}/users/${userId}/candidates/${candidate.candidateId}`)
       .send({ availability: 2 }) // 出席に更新
-      .expect('{"status":"OK","availability":2}')
+      .expect('{"status":"OK","availability":2}');
     const availabilities = await Availability.findAll({
       where: { scheduleId: scheduleId }
     });
@@ -142,7 +142,7 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
         scheduleName: 'テストコメント更新予定1',
         memo: 'テストコメント更新メモ1',
         candidates: 'テストコメント更新候補1'
-      })
+      });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     // 更新がされることをテスト
@@ -150,7 +150,7 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
     await request(app)
       .post(`/schedules/${scheduleId}/users/${userId}/comments`)
       .send({ comment: 'testcomment' })
-      .expect('{"status":"OK","comment":"testcomment"}')
+      .expect('{"status":"OK","comment":"testcomment"}');
     const comments = await Comment.findAll({
       where: { scheduleId: scheduleId }
     });
@@ -176,13 +176,13 @@ describe('/schedules/:scheduleId?edit=1', () => {
     await User.upsert({ userId: 0, username: 'testuser' });
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
+      .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     // 更新がされることをテスト
     await request(app)
       .post(`/schedules/${scheduleId}?edit=1`)
-      .send({ scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2' })
+      .send({ scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2' });
     const s = await Schedule.findByPk(scheduleId);
     expect(s.scheduleName).toBe('テスト更新予定2');
     expect(s.memo).toBe('テスト更新メモ2');
@@ -211,7 +211,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
     await User.upsert({ userId: 0, username: 'testuser' });
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト削除予定1', memo: 'テスト削除メモ1', candidates: 'テスト削除候補1' })
+      .send({ scheduleName: 'テスト削除予定1', memo: 'テスト削除メモ1', candidates: 'テスト削除候補1' });
     const createdSchedulePath = res.headers.location;
     const scheduleId = createdSchedulePath.split('/schedules/')[1];
 
@@ -237,16 +237,20 @@ describe('/schedules/:scheduleId?delete=1', () => {
     const comments = await Comment.findAll({
       where: { scheduleId: scheduleId }
     });
-    // TODO テストを実装
+    expect(comments.length).toBe(0);
+
     const availabilities = await Availability.findAll({
       where: { scheduleId: scheduleId }
     });
-    // TODO テストを実装
+    expect(availabilities.length).toBe(0);
+
     const candidates = await Candidate.findAll({
       where: { scheduleId: scheduleId }
     });
-    // TODO テストを実装
+    expect(candidates.length).toBe(0);
+
     const schedule = await Schedule.findByPk(scheduleId);
-    // TODO テストを実装
+    expect(!schedule).toBe(true);
+
   });
 });
