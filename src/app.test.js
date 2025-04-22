@@ -327,19 +327,19 @@ describe("/schedules/:scheduleId/delete", () => {
     const availabilities = await prisma.availability.findMany({
       where: { scheduleId },
     });
-    // TODO テストを実装
+    expect(availabilities).toEqual([]);
 
     const candidates = await prisma.candidate.findMany({
       where: { scheduleId },
     });
-    // TODO テストを実装
+    expect(candidates).toEqual([]);
 
     const comments = await prisma.comment.findMany({ where: { scheduleId } });
-    // TODO テストを実装
+    expect(comments).toEqual([]);
 
     const schedule = await prisma.schedule.findUnique({
       where: { scheduleId },
     });
-    // TODO テストを実装
+    expect(schedule).toBeNull();
   });
 });
