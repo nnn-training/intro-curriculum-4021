@@ -160,7 +160,7 @@ describe("/schedules/:scheduleId/users/:userId/candidates/:candidateId", () => {
       `/schedules/${scheduleId}/users/${testUser.userId}/candidates/${candidate.candidateId}`,
       {
         availability: 2,
-      },
+      }
     );
 
     expect(await res.json()).toEqual({ status: "OK", availability: 2 });
@@ -207,7 +207,7 @@ describe("/schedules/:scheduleId/users/:userId/comments", () => {
       `/schedules/${scheduleId}/users/${testUser.userId}/comments`,
       {
         comment: "testcomment",
-      },
+      }
     );
 
     expect(await res.json()).toEqual({ status: "OK", comment: "testcomment" });
@@ -305,7 +305,7 @@ describe("/schedules/:scheduleId/delete", () => {
       `/schedules/${scheduleId}/users/${testUser.userId}/candidates/${candidate.candidateId}`,
       {
         availability: 2,
-      },
+      }
     );
 
     // コメント作成
@@ -314,7 +314,7 @@ describe("/schedules/:scheduleId/delete", () => {
       `/schedules/${scheduleId}/users/${testUser.userId}/comments`,
       {
         comment: "testcomment",
-      },
+      }
     );
 
     // 削除
@@ -327,19 +327,19 @@ describe("/schedules/:scheduleId/delete", () => {
     const availabilities = await prisma.availability.findMany({
       where: { scheduleId },
     });
-    // TODO テストを実装
+    expect(availabilities.length).toBe(0);
 
     const candidates = await prisma.candidate.findMany({
       where: { scheduleId },
     });
-    // TODO テストを実装
+    expect(candidates.length).toBe(0);
 
     const comments = await prisma.comment.findMany({ where: { scheduleId } });
-    // TODO テストを実装
+    expect(comments.length).toBe(0);
 
     const schedule = await prisma.schedule.findUnique({
       where: { scheduleId },
     });
-    // TODO テストを実装
+    expect(schedule).toBeNull();
   });
 });
